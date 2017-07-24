@@ -21,11 +21,19 @@ B = [];
 
 for i = [1:length(ts)]
   t = ts(i);
+  if t == knots(nknots)
+    # special case: if t is last knot, treat it as if it were
+    # in the previous span, otherwise it would not be in any
+    j = find(knots!=t,1,"last");
+    searcht = knots(j);
+  else
+    searcht = t;
+  endif
 
   # calculate 1st order basis functions
   # 1 if in knot span, 0 if not
   for j = [1:nknots-1]
-    temp(j) = double(t >= knots(j) && t < knots(j+1));
+    temp(j) = double(searcht >= knots(j) && searcht < knots(j+1));
   endfor
 
   for k = [2:order]
@@ -42,11 +50,6 @@ for i = [1:length(ts)]
       temp(j) = d+e;
     endfor
   endfor
-
-  # fix last point (not in any knot span)
-  if t == knots(nknots)
-    temp(npoints) = 1;
-  endif
 
   B = [B; temp(1:npoints)];
 endfor
