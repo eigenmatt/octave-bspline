@@ -17,7 +17,7 @@ function B = bsplinebasis(degree,knots,ts)
 order = degree + 1;
 nknots = length(knots);
 npoints = nknots-order;
-B = [];
+B = zeros(length(ts), npoints);
 
 for i = 1:length(ts)
   t = ts(i);
@@ -32,6 +32,7 @@ for i = 1:length(ts)
 
   % calculate 1st order basis functions
   % 1 if in knot span, 0 if not
+  temp = zeros(1,nknots-1);
   for j = 1:nknots-1
     temp(j) = double(searcht >= knots(j) && searcht < knots(j+1));
   end
@@ -52,7 +53,7 @@ for i = 1:length(ts)
     end
   end
 
-  B = [B; temp(1:npoints)];
+  B(i,:) = temp(1:npoints);
 end
 
 end
